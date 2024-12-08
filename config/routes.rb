@@ -6,5 +6,11 @@ Rails.application.routes.draw do
   get "up" => "rails/health#show", as: :rails_health_check
 
   # Defines the root path route ("/")
-  # root "posts#index"
+  root "games#new"
+
+  # Route for new game
+  get "/new", to: "games#new"
+
+  # Route for score
+  post "/score", to: "games#score"
 end
