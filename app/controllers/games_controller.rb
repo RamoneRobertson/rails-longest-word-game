@@ -10,19 +10,21 @@ class GamesController < ApplicationController
   end
 
   def score
-    cache = ActiveSupport::Cache::MemoryStore.new
-    cache.read('score')
-    @letters = params[:letters].split
+    session[:total_score] ||= 0
+    @letters = params[:letters].gsub(/\s+/, "")
     @word = params[:word]
-    @in_grid = in_grid(@word)
+    @in_grid = in_grid?(@word.downcase, @letters.downcase)
     @valid = is_valid?(@word)
     @score = @word.chars.count * 10
-    @total_score += @score
+
+    if @in_grid && @valid
+      session[:total_score] += @score
+    end
   end
 
   private
-  def in_grid(word)
-    word.chars.all? { |letter| word.count(letter) <= @letters.count(letter) }
+  def in_grid?(word, letters)
+    word.chars.all? { |letter| word.count(letter) <= letters.count(letter) }
   end
 
   def is_valid?(word)
